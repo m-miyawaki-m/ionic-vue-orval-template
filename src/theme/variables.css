@@ -1,34 +1,335 @@
-/* Ionic theme variables. 既定のままでよい。プロジェクト固有の色はここで上書き。 */
+/* ============================================================
+ * Ionic テーマ変数
+ *
+ * テーマ: default（Ionicデフォルト） / dark / blue / practice
+ * アプリ配色プロパティ: https://ionicframework.com/docs/theming/themes
+ * コンポーネントカラー:  https://ionicframework.com/docs/theming/colors
+ * ============================================================ */
 
-/* === Default（Ionicデフォルト、上書きなし） === */
-/* 必要に応じて :root に追記 */
+/* ============================================================
+ * カスタムカラー（コンポーネントの color 属性で使用）
+ * 例: <ion-button color="brand">  <ion-badge color="accent">
+ *
+ * 各テーマで上書き可能。以下は Default テーマ用のデフォルト値。
+ * ============================================================ */
 
-/* === Dark テーマ === */
-body.theme-dark {
-  /* --ion-color-primary: ; */
-  /* --ion-color-primary-rgb: ; */
-  /* --ion-color-primary-contrast: ; */
-  /* --ion-color-primary-shade: ; */
-  /* --ion-color-primary-tint: ; */
-  /* --ion-background-color: ; */
-  /* --ion-background-color-rgb: ; */
-  /* --ion-text-color: ; */
-  /* --ion-text-color-rgb: ; */
-  /* --ion-toolbar-background: ; */
-  /* --ion-item-background: ; */
+:root {
+  /* --- brand: ブランド・CTA用 --- */
+  --ion-color-brand:              #5c6bc0;
+  --ion-color-brand-rgb:          92, 107, 192;
+  --ion-color-brand-contrast:     #ffffff;
+  --ion-color-brand-contrast-rgb: 255, 255, 255;
+  --ion-color-brand-shade:        #5060aa;
+  --ion-color-brand-tint:         #6c7bc6;
+
+  /* --- accent: 強調・ハイライト用 --- */
+  --ion-color-accent:              #26c6da;
+  --ion-color-accent-rgb:          38, 198, 218;
+  --ion-color-accent-contrast:     #000000;
+  --ion-color-accent-contrast-rgb: 0, 0, 0;
+  --ion-color-accent-shade:        #21aebe;
+  --ion-color-accent-tint:         #3ccbde;
+
+  /* --- extra: 補助・バッジ用 --- */
+  --ion-color-extra:              #ff7043;
+  --ion-color-extra-rgb:          255, 112, 67;
+  --ion-color-extra-contrast:     #000000;
+  --ion-color-extra-contrast-rgb: 0, 0, 0;
+  --ion-color-extra-shade:        #e0623b;
+  --ion-color-extra-tint:         #ff7e56;
 }
 
-/* === Blue テーマ === */
+/* カスタムカラー使用クラス（Ionic が color 属性を解決するために必要） */
+.ion-color-brand {
+  --ion-color-base:         var(--ion-color-brand);
+  --ion-color-base-rgb:     var(--ion-color-brand-rgb);
+  --ion-color-contrast:     var(--ion-color-brand-contrast);
+  --ion-color-contrast-rgb: var(--ion-color-brand-contrast-rgb);
+  --ion-color-shade:        var(--ion-color-brand-shade);
+  --ion-color-tint:         var(--ion-color-brand-tint);
+}
+
+.ion-color-accent {
+  --ion-color-base:         var(--ion-color-accent);
+  --ion-color-base-rgb:     var(--ion-color-accent-rgb);
+  --ion-color-contrast:     var(--ion-color-accent-contrast);
+  --ion-color-contrast-rgb: var(--ion-color-accent-contrast-rgb);
+  --ion-color-shade:        var(--ion-color-accent-shade);
+  --ion-color-tint:         var(--ion-color-accent-tint);
+}
+
+.ion-color-extra {
+  --ion-color-base:         var(--ion-color-extra);
+  --ion-color-base-rgb:     var(--ion-color-extra-rgb);
+  --ion-color-contrast:     var(--ion-color-extra-contrast);
+  --ion-color-contrast-rgb: var(--ion-color-extra-contrast-rgb);
+  --ion-color-shade:        var(--ion-color-extra-shade);
+  --ion-color-tint:         var(--ion-color-extra-tint);
+}
+
+/* ============================================================
+ * Dark テーマ
+ * ダークグレー背景 / 明るいグレーテキスト / 紫アクセント
+ * ============================================================ */
+body.theme-dark {
+  /* --- 背景・テキスト --- */
+  --ion-background-color:     #121212;
+  --ion-background-color-rgb: 18, 18, 18;
+  --ion-text-color:           #e0e0e0;
+  --ion-text-color-rgb:       224, 224, 224;
+
+  /* --- バックドロップ --- */
+  --ion-backdrop-color:           #000000;
+  --ion-backdrop-opacity:         0.5;
+  --ion-overlay-background-color: #1e1e1e;
+
+  /* --- ボーダー・シャドウ --- */
+  --ion-border-color:     #2c2c2c;
+  --ion-box-shadow-color: rgba(0, 0, 0, 0.5);
+
+  /* --- タブバー --- */
+  --ion-tab-bar-background:         #1a1a1a;
+  --ion-tab-bar-background-focused: #222222;
+  --ion-tab-bar-border-color:       #2c2c2c;
+  --ion-tab-bar-color:              #888888;
+  --ion-tab-bar-color-selected:     #bb86fc;
+
+  /* --- ツールバー --- */
+  --ion-toolbar-background:                 #1a1a1a;
+  --ion-toolbar-border-color:               #2c2c2c;
+  --ion-toolbar-color:                      #e0e0e0;
+  --ion-toolbar-segment-color:              #aaaaaa;
+  --ion-toolbar-segment-color-checked:      #bb86fc;
+  --ion-toolbar-segment-background:         #2a2a2a;
+  --ion-toolbar-segment-background-checked: #3d3d3d;
+  --ion-toolbar-segment-indicator-color:    #bb86fc;
+
+  /* --- アイテム --- */
+  --ion-item-background:   #1e1e1e;
+  --ion-item-border-color: #2c2c2c;
+  --ion-item-color:        #e0e0e0;
+
+  /* --- プレースホルダー --- */
+  --ion-placeholder-color: #666666;
+
+  /* --- ステップカラー（背景→テキストの段階補間）--- */
+  --ion-color-step-50:  #1e1e1e;
+  --ion-color-step-100: #2a2a2a;
+  --ion-color-step-150: #363636;
+  --ion-color-step-200: #424242;
+  --ion-color-step-250: #4e4e4e;
+  --ion-color-step-300: #5a5a5a;
+  --ion-color-step-350: #666666;
+  --ion-color-step-400: #727272;
+  --ion-color-step-450: #7e7e7e;
+  --ion-color-step-500: #8a8a8a;
+  --ion-color-step-550: #969696;
+  --ion-color-step-600: #a2a2a2;
+  --ion-color-step-650: #aeaeae;
+  --ion-color-step-700: #bababa;
+  --ion-color-step-750: #c6c6c6;
+  --ion-color-step-800: #d2d2d2;
+  --ion-color-step-850: #dedede;
+  --ion-color-step-900: #eaeaea;
+  --ion-color-step-950: #f5f5f5;
+
+  /* --- カスタムカラー上書き --- */
+  --ion-color-brand:              #7986cb;
+  --ion-color-brand-rgb:          121, 134, 203;
+  --ion-color-brand-contrast:     #000000;
+  --ion-color-brand-contrast-rgb: 0, 0, 0;
+  --ion-color-brand-shade:        #6a76b3;
+  --ion-color-brand-tint:         #8692d0;
+
+  --ion-color-accent:              #4dd0e1;
+  --ion-color-accent-rgb:          77, 208, 225;
+  --ion-color-accent-contrast:     #000000;
+  --ion-color-accent-contrast-rgb: 0, 0, 0;
+  --ion-color-accent-shade:        #44b7c6;
+  --ion-color-accent-tint:         #5fd5e4;
+
+  --ion-color-extra:              #ff8a65;
+  --ion-color-extra-rgb:          255, 138, 101;
+  --ion-color-extra-contrast:     #000000;
+  --ion-color-extra-contrast-rgb: 0, 0, 0;
+  --ion-color-extra-shade:        #e07a59;
+  --ion-color-extra-tint:         #ff9674;
+}
+
+/* ============================================================
+ * Blue テーマ
+ * ライトブルー背景 / 紺テキスト / 青ツールバー
+ * ============================================================ */
 body.theme-blue {
-  /* --ion-color-primary: ; */
-  /* --ion-color-primary-rgb: ; */
-  /* --ion-color-primary-contrast: ; */
-  /* --ion-color-primary-shade: ; */
-  /* --ion-color-primary-tint: ; */
-  /* --ion-background-color: ; */
-  /* --ion-background-color-rgb: ; */
-  /* --ion-text-color: ; */
-  /* --ion-text-color-rgb: ; */
-  /* --ion-toolbar-background: ; */
-  /* --ion-item-background: ; */
+  /* --- 背景・テキスト --- */
+  --ion-background-color:     #e3f2fd;
+  --ion-background-color-rgb: 227, 242, 253;
+  --ion-text-color:           #0a1929;
+  --ion-text-color-rgb:       10, 25, 41;
+
+  /* --- バックドロップ --- */
+  --ion-backdrop-color:           #000000;
+  --ion-backdrop-opacity:         0.3;
+  --ion-overlay-background-color: #ffffff;
+
+  /* --- ボーダー・シャドウ --- */
+  --ion-border-color:     #90caf9;
+  --ion-box-shadow-color: rgba(0, 0, 0, 0.15);
+
+  /* --- タブバー --- */
+  --ion-tab-bar-background:         #1565c0;
+  --ion-tab-bar-background-focused: #1976d2;
+  --ion-tab-bar-border-color:       #0d47a1;
+  --ion-tab-bar-color:              rgba(255, 255, 255, 0.6);
+  --ion-tab-bar-color-selected:     #ffffff;
+
+  /* --- ツールバー --- */
+  --ion-toolbar-background:                 #1565c0;
+  --ion-toolbar-border-color:               #0d47a1;
+  --ion-toolbar-color:                      #ffffff;
+  --ion-toolbar-segment-color:              rgba(255, 255, 255, 0.7);
+  --ion-toolbar-segment-color-checked:      #ffffff;
+  --ion-toolbar-segment-background:         rgba(255, 255, 255, 0.1);
+  --ion-toolbar-segment-background-checked: rgba(255, 255, 255, 0.2);
+  --ion-toolbar-segment-indicator-color:    #ffffff;
+
+  /* --- アイテム --- */
+  --ion-item-background:   #ffffff;
+  --ion-item-border-color: #90caf9;
+  --ion-item-color:        #0a1929;
+
+  /* --- プレースホルダー --- */
+  --ion-placeholder-color: #78909c;
+
+  /* --- ステップカラー --- */
+  --ion-color-step-50:  #d6e8f7;
+  --ion-color-step-100: #c8def4;
+  --ion-color-step-150: #bad4f0;
+  --ion-color-step-200: #accaed;
+  --ion-color-step-250: #9ec0e9;
+  --ion-color-step-300: #8fb5e5;
+  --ion-color-step-350: #81abe1;
+  --ion-color-step-400: #73a1de;
+  --ion-color-step-450: #6597da;
+  --ion-color-step-500: #578dd6;
+  --ion-color-step-550: #4983d2;
+  --ion-color-step-600: #3a79cf;
+  --ion-color-step-650: #2c6fcb;
+  --ion-color-step-700: #1e65c7;
+  --ion-color-step-750: #1859b3;
+  --ion-color-step-800: #124d9f;
+  --ion-color-step-850: #0c418b;
+  --ion-color-step-900: #063577;
+  --ion-color-step-950: #002963;
+
+  /* --- カスタムカラー上書き --- */
+  --ion-color-brand:              #283593;
+  --ion-color-brand-rgb:          40, 53, 147;
+  --ion-color-brand-contrast:     #ffffff;
+  --ion-color-brand-contrast-rgb: 255, 255, 255;
+  --ion-color-brand-shade:        #232e82;
+  --ion-color-brand-tint:         #3e499e;
+
+  --ion-color-accent:              #00acc1;
+  --ion-color-accent-rgb:          0, 172, 193;
+  --ion-color-accent-contrast:     #000000;
+  --ion-color-accent-contrast-rgb: 0, 0, 0;
+  --ion-color-accent-shade:        #0097aa;
+  --ion-color-accent-tint:         #1ab4c7;
+
+  --ion-color-extra:              #e65100;
+  --ion-color-extra-rgb:          230, 81, 0;
+  --ion-color-extra-contrast:     #ffffff;
+  --ion-color-extra-contrast-rgb: 255, 255, 255;
+  --ion-color-extra-shade:        #ca4700;
+  --ion-color-extra-tint:         #e8621a;
+}
+
+/* ============================================================
+ * 練習 テーマ（body.theme-practice）
+ * クリーム背景 / 深茶テキスト / オレンジツールバー
+ * ============================================================ */
+body.theme-practice {
+  /* --- 背景・テキスト --- */
+  --ion-background-color:     #fff8f0;
+  --ion-background-color-rgb: 255, 248, 240;
+  --ion-text-color:           #3e2723;
+  --ion-text-color-rgb:       62, 39, 35;
+
+  /* --- バックドロップ --- */
+  --ion-backdrop-color:           #3e2723;
+  --ion-backdrop-opacity:         0.35;
+  --ion-overlay-background-color: #fffbf7;
+
+  /* --- ボーダー・シャドウ --- */
+  --ion-border-color:     #ffcc80;
+  --ion-box-shadow-color: rgba(62, 39, 35, 0.2);
+
+  /* --- タブバー --- */
+  --ion-tab-bar-background:         #e65100;
+  --ion-tab-bar-background-focused: #f4511e;
+  --ion-tab-bar-border-color:       #bf360c;
+  --ion-tab-bar-color:              rgba(255, 255, 255, 0.6);
+  --ion-tab-bar-color-selected:     #ffffff;
+
+  /* --- ツールバー --- */
+  --ion-toolbar-background:                 #e65100;
+  --ion-toolbar-border-color:               #bf360c;
+  --ion-toolbar-color:                      #ffffff;
+  --ion-toolbar-segment-color:              rgba(255, 255, 255, 0.7);
+  --ion-toolbar-segment-color-checked:      #ffffff;
+  --ion-toolbar-segment-background:         rgba(255, 255, 255, 0.1);
+  --ion-toolbar-segment-background-checked: rgba(255, 255, 255, 0.25);
+  --ion-toolbar-segment-indicator-color:    #ffffff;
+
+  /* --- アイテム --- */
+  --ion-item-background:   #fff3e0;
+  --ion-item-border-color: #ffcc80;
+  --ion-item-color:        #3e2723;
+
+  /* --- プレースホルダー --- */
+  --ion-placeholder-color: #a1887f;
+
+  /* --- ステップカラー --- */
+  --ion-color-step-50:  #f4ede3;
+  --ion-color-step-100: #eae2d7;
+  --ion-color-step-150: #e0d7cb;
+  --ion-color-step-200: #d6ccbf;
+  --ion-color-step-250: #ccc1b3;
+  --ion-color-step-300: #c2b6a7;
+  --ion-color-step-350: #b8ab9b;
+  --ion-color-step-400: #aea08f;
+  --ion-color-step-450: #a49583;
+  --ion-color-step-500: #9a8a77;
+  --ion-color-step-550: #907f6b;
+  --ion-color-step-600: #86745f;
+  --ion-color-step-650: #7c6953;
+  --ion-color-step-700: #6f5e49;
+  --ion-color-step-750: #625341;
+  --ion-color-step-800: #554839;
+  --ion-color-step-850: #483d31;
+  --ion-color-step-900: #3b3229;
+  --ion-color-step-950: #2e2721;
+
+  /* --- カスタムカラー上書き --- */
+  --ion-color-brand:              #f57f17;
+  --ion-color-brand-rgb:          245, 127, 23;
+  --ion-color-brand-contrast:     #000000;
+  --ion-color-brand-contrast-rgb: 0, 0, 0;
+  --ion-color-brand-shade:        #d86f14;
+  --ion-color-brand-tint:         #f68c2e;
+
+  --ion-color-accent:              #2e7d32;
+  --ion-color-accent-rgb:          46, 125, 50;
+  --ion-color-accent-contrast:     #ffffff;
+  --ion-color-accent-contrast-rgb: 255, 255, 255;
+  --ion-color-accent-shade:        #286e2c;
+  --ion-color-accent-tint:         #438a47;
+
+  --ion-color-extra:              #c2185b;
+  --ion-color-extra-rgb:          194, 24, 91;
+  --ion-color-extra-contrast:     #ffffff;
+  --ion-color-extra-contrast-rgb: 255, 255, 255;
+  --ion-color-extra-shade:        #aa1550;
+  --ion-color-extra-tint:         #c8306b;
 }

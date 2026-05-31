@@ -45,6 +45,7 @@ const sheetButtons = [
   { text: 'Default', handler: () => setTheme('default') },
   { text: 'Dark',    handler: () => setTheme('dark') },
   { text: 'Blue',    handler: () => setTheme('blue') },
+  { text: '練習',    handler: () => setTheme('practice') },
   { text: 'キャンセル', role: 'cancel' },
 ]
 </script>

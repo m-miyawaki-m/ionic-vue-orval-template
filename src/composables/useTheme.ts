@@ -1,6 +1,6 @@
 import { ref } from 'vue'
 
-const THEMES = ['default', 'dark', 'blue'] as const
+const THEMES = ['default', 'dark', 'blue', 'practice'] as const
 type Theme = typeof THEMES[number]
 
 const currentTheme = ref<Theme>('default')
