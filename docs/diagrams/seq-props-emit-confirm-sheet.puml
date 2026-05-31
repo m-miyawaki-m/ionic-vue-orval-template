@@ -1,0 +1,56 @@
+@startuml seq-props-emit-confirm-sheet
+title props / emit シーケンス — ConfirmSheet
+
+actor "ユーザー" as User
+participant "ItemDetailPage\n（親コンポーネント）" as Parent
+participant "ConfirmSheet\n（子コンポーネント）" as Child
+participant "IonActionSheet\n（Ionic）" as Sheet
+
+== コンポーネント初期化 ==
+
+Parent -> Child : [props] isOpen = false\ntitle = "このアイテムを削除しますか？"\nconfirmLabel = "削除"\ndestructive = true
+note over Child : isOpen=false のため\n非表示状態で待機
+
+== 削除ボタン押下 → シートを開く ==
+
+User -> Parent : 「削除」ボタンをタップ
+Parent -> Parent : showConfirm = true
+Parent -> Child : [props] isOpen = true ← 変更通知
+Child -> Sheet : :is-open="true"\nheader="このアイテムを削除しますか？"\nbuttons=[{削除,destructive},{キャンセル,cancel}]
+Sheet -> User : ActionSheet 表示
+
+== パターン① 確認（削除を実行）==
+
+User -> Sheet : 「削除」ボタンをタップ
+Sheet -> Child : buttons[0].handler() 実行
+Child -> Parent : [emit] confirmed
+note over Parent : @confirmed="remove"
+Parent -> Parent : remove()\n→ deleteMutation.mutate({ id })
+note over Parent : API 呼び出しは\nシーケンス図\nseq-item-detail-operations.puml\nを参照
+
+Sheet -> Child : @did-dismiss\n(detail.role = 'destructive')
+Child -> Child : onDismiss():\n role は 'cancel'/'backdrop' でない\n→ cancelled は emit しない
+
+== パターン② キャンセル ==
+
+User -> Sheet : 「キャンセル」ボタンをタップ
+Sheet -> Child : @did-dismiss\n(detail.role = 'cancel')
+Child -> Child : onDismiss():\n role === 'cancel'
+Child -> Parent : [emit] cancelled
+note over Parent : @cancelled="showConfirm = false"
+Parent -> Parent : showConfirm = false
+Parent -> Child : [props] isOpen = false ← 変更通知
+Child -> Sheet : :is-open="false"
+Sheet -> User : ActionSheet 非表示
+
+== パターン③ バックドロップ押下 ==
+
+User -> Sheet : バックドロップをタップ
+Sheet -> Child : @did-dismiss\n(detail.role = 'backdrop')
+Child -> Child : onDismiss():\n role === 'backdrop'
+Child -> Parent : [emit] cancelled
+Parent -> Parent : showConfirm = false
+Parent -> Child : [props] isOpen = false ← 変更通知
+Sheet -> User : ActionSheet 非表示
+
+@enduml
