@@ -3,17 +3,21 @@ title ItemListPage ボタン操作シーケンス
 
 actor "ユーザー" as User
 participant "ItemListPage" as Page
+participant "useDisclosure\n(composable)" as Disclosure
 participant "IonModal\n(追加フォーム)" as Modal
 participant "useCreateItem\n(Vue Query)" as Mutation
+participant "useInvalidateItems\n(composable)" as Invalidate
 participant "customFetch\n(mutator.ts)" as Fetch
 participant "MSW Handler\n(handlers.ts)" as Handler
 participant "store.ts" as Store
-participant "QueryClient\n(Vue Query)" as QC
 
 == 追加モーダルを開く ==
 
 User -> Page : 「追加」ボタンをタップ
-Page -> Page : openCreate():\n  form をリセット\n  showCreate = true
+Page -> Page : openCreate():\n  form をリセット
+Page -> Disclosure : open()
+Disclosure -> Disclosure : isOpen = true
+Disclosure --> Page : showCreate = true
 Page -> Modal : :is-open="true"
 Modal -> User : 追加フォームを表示\n（タイトル / 説明 / 状態）
 
@@ -29,15 +33,18 @@ Store --> Handler : 新規 Item（id付き）
 Handler --> Fetch : HttpResponse.json(item, 201)
 Fetch --> Mutation : 作成成功
 
-Mutation -> QC : onSuccess:\n  invalidateQueries(\n    getListItemsQueryKey()\n  )
-QC -> Fetch : GET /api/items\n（再フェッチ）
+Mutation -> Invalidate : onSuccess:\n  invalidateItems()
+Invalidate -> Invalidate : queryClient.invalidateQueries(\n  getListItemsQueryKey()\n)
+Invalidate -> Fetch : GET /api/items（再フェッチ）
 Fetch -> Handler : http.get('*/api/items')
 Handler -> Store : store.list()
-Store --> Handler : Item[] (新規含む)
+Store --> Handler : Item[]（新規含む）
 Handler --> Fetch : HttpResponse.json(items)
-Fetch --> Page : data 更新\n（新規アイテム含む一覧）
+Fetch --> Page : data 更新
 
-Mutation -> Page : showCreate = false
+Mutation -> Disclosure : onSuccess:\n  closeCreate()
+Disclosure -> Disclosure : isOpen = false
+Disclosure --> Page : showCreate = false
 Page -> Modal : :is-open="false"
 Modal -> User : モーダルを閉じる
 Page -> User : 一覧に新アイテムを表示
@@ -45,7 +52,9 @@ Page -> User : 一覧に新アイテムを表示
 == モーダルを閉じる（キャンセル） ==
 
 User -> Modal : 「閉じる」ボタンをタップ\nor バックドロップをタップ
-Modal -> Page : @did-dismiss:\n  showCreate = false
+Modal -> Page : @did-dismiss:\n  closeCreate()
+Page -> Disclosure : close()
+Disclosure -> Disclosure : isOpen = false
 Page -> User : モーダルを閉じる\n（データ変更なし）
 
 @enduml

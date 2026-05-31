@@ -3,13 +3,15 @@ title ItemDetailPage ボタン操作シーケンス
 
 actor "ユーザー" as User
 participant "ItemDetailPage" as Page
+participant "useDisclosure\n(composable)" as Disclosure
+participant "ConfirmSheet" as Confirm
 participant "useGetItem\n(Vue Query)" as Query
 participant "useUpdateItem\n(Mutation)" as UpdateM
 participant "useDeleteItem\n(Mutation)" as DeleteM
+participant "useInvalidateItems\n(composable)" as Invalidate
 participant "customFetch\n(mutator.ts)" as Fetch
 participant "MSW Handler\n(handlers.ts)" as Handler
 participant "store.ts" as Store
-participant "QueryClient\n(Vue Query)" as QC
 participant "Vue Router" as Router
 
 == ページ初期表示（データ取得）==
@@ -23,21 +25,20 @@ Handler -> Store : store.get(id)
 alt アイテムが存在する
   Store --> Handler : Item
   Handler --> Fetch : HttpResponse.json(item, 200)
-  Fetch --> Query : data: Item\nisLoading: false
-  Query -> Page : watch(data):\n  form.title = data.title\n  form.description = data.description\n  form.status = data.status
+  Fetch --> Query : data: Item
+  Query -> Page : watch(data):\n  form に初期値セット
   Page -> User : フォームにデータを表示
 else アイテムが存在しない（404）
   Store --> Handler : undefined
   Handler --> Fetch : HttpResponse(null, 404)
   Fetch --> Query : isError: true
-  Query -> Page : isError = true
   Page -> User : 「項目が見つかりません（404）」表示
 end
 
 == 保存ボタン押下 ==
 
 User -> Page : フォーム編集後「保存」をタップ
-Page -> UpdateM : save():\n  updateMutation.mutate(\n    { id, data: form }\n  )
+Page -> UpdateM : save():\n  updateMutation.mutate({ id, data: form })
 UpdateM -> Fetch : PUT /api/items/:id\nBody: ItemInput JSON
 Fetch -> Handler : http.put('*/api/items/:id')
 Handler -> Store : store.update(id, body)
@@ -45,23 +46,43 @@ Store --> Handler : 更新後の Item
 Handler --> Fetch : HttpResponse.json(item, 200)
 Fetch --> UpdateM : 更新成功
 
-UpdateM -> QC : onSuccess:\n  invalidateQueries(\n    getListItemsQueryKey()\n  )
+UpdateM -> Invalidate : onSuccess:\n  invalidateItems()
+Invalidate -> Invalidate : queryClient.invalidateQueries(...)
 UpdateM -> Router : router.back()
 Router -> User : 前画面（ItemListPage）へ戻る
 
-== 削除ボタン押下 ==
+== 削除ボタン押下 → 確認シート ==
 
 User -> Page : 「削除」をタップ
-Page -> DeleteM : remove():\n  deleteMutation.mutate({ id })
-DeleteM -> Fetch : DELETE /api/items/:id
-Fetch -> Handler : http.delete('*/api/items/:id')
-Handler -> Store : store.remove(id)
-Store --> Handler : void
-Handler --> Fetch : HttpResponse(null, 204)
-Fetch --> DeleteM : 削除成功
+Page -> Disclosure : openConfirm()
+Disclosure -> Disclosure : isOpen = true
+Disclosure --> Page : showConfirm = true
+Page -> Confirm : [props] isOpen = true\ntitle / destructive
+Confirm -> User : 確認 ActionSheet 表示
 
-DeleteM -> QC : onSuccess:\n  invalidateQueries(\n    getListItemsQueryKey()\n  )
-DeleteM -> Router : router.replace('/items')
-Router -> User : ItemListPage へ遷移\n（ブラウザ履歴から除去）
+alt ユーザーが「削除」を選択
+  User -> Confirm : 「削除」ボタンをタップ
+  Confirm -> Page : [emit] confirmed
+  Page -> DeleteM : remove():\n  deleteMutation.mutate({ id })
+  DeleteM -> Fetch : DELETE /api/items/:id
+  Fetch -> Handler : http.delete('*/api/items/:id')
+  Handler -> Store : store.remove(id)
+  Handler --> Fetch : HttpResponse(null, 204)
+  Fetch --> DeleteM : 削除成功
+
+  DeleteM -> Invalidate : onSuccess:\n  invalidateItems()
+  Invalidate -> Invalidate : queryClient.invalidateQueries(...)
+  DeleteM -> Router : router.replace('/items')
+  Router -> User : ItemListPage へ遷移
+
+else ユーザーがキャンセル
+  User -> Confirm : 「キャンセル」or バックドロップ
+  Confirm -> Page : [emit] cancelled
+  Page -> Disclosure : closeConfirm()
+  Disclosure -> Disclosure : isOpen = false
+  Disclosure --> Page : showConfirm = false
+  Page -> Confirm : [props] isOpen = false
+  Confirm -> User : ActionSheet を閉じる
+end
 
 @enduml

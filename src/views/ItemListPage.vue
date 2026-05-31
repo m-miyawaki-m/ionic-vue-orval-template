@@ -27,12 +27,12 @@
       </ion-text>
     </ion-list>
 
-    <ion-modal :is-open="showCreate" @did-dismiss="showCreate = false">
+    <ion-modal :is-open="showCreate" @did-dismiss="closeCreate">
       <ion-header>
         <ion-toolbar>
           <ion-title>追加</ion-title>
           <ion-buttons slot="end">
-            <ion-button @click="showCreate = false">閉じる</ion-button>
+            <ion-button @click="closeCreate">閉じる</ion-button>
           </ion-buttons>
         </ion-toolbar>
       </ion-header>
@@ -53,36 +53,37 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, computed } from 'vue'
+import { reactive, computed } from 'vue'
 import {
   IonButton, IonList, IonItem, IonLabel, IonSpinner, IonText, IonModal,
   IonHeader, IonToolbar, IonTitle, IonButtons, IonContent,
   IonInput, IonTextarea, IonSelect, IonSelectOption,
 } from '@ionic/vue'
-import { useQueryClient } from '@tanstack/vue-query'
 import AppLayout from '@/layouts/AppLayout.vue'
-import { useListItems, useCreateItem, getListItemsQueryKey } from '@/api/generated/endpoints'
+import { useListItems, useCreateItem } from '@/api/generated/endpoints'
 import type { ItemInputStatus } from '@/api/generated/model'
+import { useDisclosure } from '@/composables/useDisclosure'
+import { useInvalidateItems } from '@/composables/useInvalidateItems'
 
-const queryClient = useQueryClient()
 const { data, isLoading, isError } = useListItems()
 const items = computed(() => data.value)
 
-const showCreate = ref(false)
+const { isOpen: showCreate, open: openModal, close: closeCreate } = useDisclosure()
+const invalidateItems = useInvalidateItems()
 const form = reactive({ title: '', description: '', status: 'todo' as ItemInputStatus })
 
 function openCreate() {
   form.title = ''
   form.description = ''
   form.status = 'todo' as ItemInputStatus
-  showCreate.value = true
+  openModal()
 }
 
 const createMutation = useCreateItem({
   mutation: {
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: getListItemsQueryKey() })
-      showCreate.value = false
+      invalidateItems()
+      closeCreate()
     },
   },
 })

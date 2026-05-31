@@ -1,5 +1,13 @@
 @startwbs comp-item-detail-page
 title ItemDetailPage コンポーネントツリー
+note
+  利用 composable:
+  - useDisclosure()      → showConfirm / openConfirm / closeConfirm
+  - useInvalidateItems() → 保存・削除成功後にアイテム一覧キャッシュを無効化
+  - useGetItem(id)       → GET /api/items/:id
+  - useUpdateItem()      → PUT /api/items/:id
+  - useDeleteItem()      → DELETE /api/items/:id
+end note
 
 * ItemDetailPage\n<src/views/ItemDetailPage.vue>
 ** AppLayout\n<src/layouts/AppLayout.vue>\ntitle="詳細" back-href="/items"
@@ -10,12 +18,12 @@ title ItemDetailPage コンポーネントツリー
 ****** IonBackButton : default-href="/items"
 ***** IonTitle : "詳細"
 ***** IonButtons [slot=end]
-****** IonButton [テーマ切替]\n@click="showSheet=true"
+****** IonButton [テーマ切替]\n@click="openSheet()"\n※useDisclosure で管理
 ******* IonIcon : colorPaletteOutline
 ****** slot[actions] : (なし)
 *** IonContent
 **** slot [ページコンテンツ]
-*** IonActionSheet [テーマ選択]\n:is-open="showSheet"\nheader="テーマを選択"
+*** IonActionSheet [テーマ選択]\n:is-open="showSheet"\n@did-dismiss="closeSheet()"
 ** [v-if isLoading]
 *** IonSpinner
 ** [v-else-if isError]
@@ -28,6 +36,7 @@ title ItemDetailPage コンポーネントツリー
 **** IonSelectOption : doing
 **** IonSelectOption : done
 *** IonButton : "保存"\n@click="save"\n:disabled="!form.title"
-*** IonButton : "削除"\ncolor="danger"\n@click="remove"
+*** IonButton : "削除"\ncolor="danger"\n@click="openConfirm()"
+** ConfirmSheet\n<src/components/ConfirmSheet.vue>\n:is-open="showConfirm"\n@confirmed="remove"\n@cancelled="closeConfirm()"
 
 @endwbs

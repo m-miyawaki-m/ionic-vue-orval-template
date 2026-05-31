@@ -1,5 +1,12 @@
 @startwbs comp-item-list-page
 title ItemListPage コンポーネントツリー
+note
+  利用 composable:
+  - useDisclosure()    → showCreate / openModal / closeCreate
+  - useInvalidateItems() → 保存成功後にアイテム一覧キャッシュを無効化
+  - useListItems()     → GET /api/items
+  - useCreateItem()    → POST /api/items
+end note
 
 * ItemListPage\n<src/views/ItemListPage.vue>
 ** AppLayout\n<src/layouts/AppLayout.vue>
@@ -8,12 +15,12 @@ title ItemListPage コンポーネントツリー
 **** IonToolbar
 ***** IonTitle : "Items"
 ***** IonButtons [slot=end]
-****** IonButton [テーマ切替]\n@click="showSheet=true"
+****** IonButton [テーマ切替]\n@click="openSheet()"\n※useDisclosure で管理
 ******* IonIcon : colorPaletteOutline
-****** slot[actions]\n→ IonButton : "追加"\n@click="openCreate"
+****** slot[actions]\n→ IonButton : "追加"\n@click="openCreate()"
 *** IonContent
 **** slot [ページコンテンツ]
-*** IonActionSheet [テーマ選択]\n:is-open="showSheet"\nheader="テーマを選択"
+*** IonActionSheet [テーマ選択]\n:is-open="showSheet"\n@did-dismiss="closeSheet()"
 ** [v-if isLoading]
 *** IonSpinner
 ** [v-else-if isError]
@@ -25,12 +32,12 @@ title ItemListPage コンポーネントツリー
 ***** p : item.status
 *** [v-if items.length===0]
 **** IonText : "項目がありません"
-** IonModal [追加フォーム]\n:is-open="showCreate"
+** IonModal [追加フォーム]\n:is-open="showCreate"\n@did-dismiss="closeCreate()"
 *** IonHeader
 **** IonToolbar
 ***** IonTitle : "追加"
 ***** IonButtons [slot=end]
-****** IonButton : "閉じる"\n@click="showCreate=false"
+****** IonButton : "閉じる"\n@click="closeCreate()"
 *** IonContent
 **** IonInput : タイトル\nv-model="form.title"
 **** IonTextarea : 説明\nv-model="form.description"

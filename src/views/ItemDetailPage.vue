@@ -14,7 +14,7 @@
       </ion-select>
 
       <ion-button expand="block" class="ion-margin-top" :disabled="!form.title" @click="save">保存</ion-button>
-      <ion-button expand="block" color="danger" @click="showConfirm = true">削除</ion-button>
+      <ion-button expand="block" color="danger" @click="openConfirm">削除</ion-button>
     </template>
   </app-layout>
 
@@ -25,30 +25,31 @@
     confirm-label="削除"
     :destructive="true"
     @confirmed="remove"
-    @cancelled="showConfirm = false"
+    @cancelled="closeConfirm"
   />
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, watch } from 'vue'
+import { reactive, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import {
   IonSpinner, IonText, IonInput, IonTextarea, IonSelect, IonSelectOption, IonButton,
 } from '@ionic/vue'
-import { useQueryClient } from '@tanstack/vue-query'
 import AppLayout from '@/layouts/AppLayout.vue'
 import ConfirmSheet from '@/components/ConfirmSheet.vue'
-import { useGetItem, useUpdateItem, useDeleteItem, getListItemsQueryKey } from '@/api/generated/endpoints'
+import { useGetItem, useUpdateItem, useDeleteItem } from '@/api/generated/endpoints'
 import type { ItemInputStatus } from '@/api/generated/model'
+import { useDisclosure } from '@/composables/useDisclosure'
+import { useInvalidateItems } from '@/composables/useInvalidateItems'
 
 const route = useRoute()
 const router = useRouter()
-const queryClient = useQueryClient()
 const id = String(route.params.id)
 
 const { data, isLoading, isError } = useGetItem(id)
 const form = reactive({ title: '', description: '', status: 'todo' as ItemInputStatus })
-const showConfirm = ref(false)
+const { isOpen: showConfirm, open: openConfirm, close: closeConfirm } = useDisclosure()
+const invalidateItems = useInvalidateItems()
 
 watch(data, (v) => {
   if (v) {
@@ -61,7 +62,7 @@ watch(data, (v) => {
 const updateMutation = useUpdateItem({
   mutation: {
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: getListItemsQueryKey() })
+      invalidateItems()
       router.back()
     },
   },
@@ -69,7 +70,7 @@ const updateMutation = useUpdateItem({
 const deleteMutation = useDeleteItem({
   mutation: {
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: getListItemsQueryKey() })
+      invalidateItems()
       router.replace('/items')
     },
   },
