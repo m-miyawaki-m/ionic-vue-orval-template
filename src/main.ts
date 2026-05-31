@@ -12,8 +12,17 @@ import '@ionic/vue/css/typography.css'
 import './theme/variables.css'
 
 const app = createApp(App)
-  .use(IonicVue, { mode: 'md' }) // md固定
+  .use(IonicVue, { mode: 'md' })
   .use(router)
   .use(VueQueryPlugin)
 
-router.isReady().then(() => app.mount('#app'))
+async function enableMocking() {
+  if (!import.meta.env.DEV) return
+  const { worker } = await import('./mocks/browser')
+  await worker.start({ onUnhandledRequest: 'bypass' })
+}
+
+router.isReady().then(async () => {
+  await enableMocking()
+  app.mount('#app')
+})

@@ -36,5 +36,10 @@
     "vite": "^5.0.0",
     "vitest": "^1.4.0",
     "vue-tsc": "^2.0.0"
+  },
+  "msw": {
+    "workerDirectory": [
+      "public"
+    ]
   }
 }
