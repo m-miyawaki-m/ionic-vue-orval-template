@@ -1,0 +1,46 @@
+@startuml seq-theme-switch
+title テーマ切り替えシーケンス
+
+actor "ユーザー" as User
+participant "AppLayout.vue" as Layout
+participant "IonActionSheet" as Sheet
+participant "useTheme\n(composable)" as Theme
+participant "body.classList\n(DOM)" as DOM
+participant "localStorage" as LS
+
+== テーマ選択メニューを開く ==
+
+User -> Layout : カラーパレット\nアイコンをタップ
+Layout -> Layout : showSheet = true
+Layout -> Sheet : :is-open="true"\nheader="テーマを選択"
+Sheet -> User : ActionSheet 表示\n[ Default / Dark / Blue / 練習 / キャンセル ]
+
+== テーマ選択（例: Dark） ==
+
+User -> Sheet : "Dark" を選択
+Sheet -> Layout : handler() 実行
+Layout -> Theme : setTheme('dark')
+
+Theme -> DOM : THEMES.forEach:\n  classList.remove('theme-blue')\n  classList.remove('theme-practice')
+Theme -> DOM : classList.add('theme-dark')
+Theme -> LS : setItem('app-theme', 'dark')
+Theme -> Theme : currentTheme.value = 'dark'
+
+DOM --> User : CSS変数が即時切り替わり\n（ツールバー・背景・テキスト色が変化）
+
+Sheet -> Layout : @did-dismiss 発火
+Layout -> Layout : showSheet = false
+
+note over LS
+  次回起動時に initTheme() が
+  'dark' を読み込んでテーマ復元
+end note
+
+== キャンセル時 ==
+
+User -> Sheet : "キャンセル" を選択
+Sheet -> Layout : @did-dismiss 発火\n（role: 'cancel' のためハンドラなし）
+Layout -> Layout : showSheet = false
+note over Theme, DOM : テーマは変更されない
+
+@enduml

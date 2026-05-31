@@ -1,0 +1,55 @@
+@startuml seq-app-startup
+title アプリ起動・初期表示シーケンス
+
+actor "ブラウザ" as Browser
+participant "main.ts" as Main
+participant "Vue Router" as Router
+participant "MSW\nService Worker" as MSW
+participant "useTheme" as Theme
+participant "localStorage" as LS
+participant "App.vue\n<IonRouterOutlet>" as App
+participant "ItemListPage" as Page
+participant "customFetch" as Fetch
+participant "MSW Handler\n(handlers.ts)" as Handler
+participant "store.ts" as Store
+
+Browser -> Main : index.html 読み込み\n<script src="/src/main.ts">
+
+Main -> Main : createApp(App)\n  .use(IonicVue)\n  .use(router)\n  .use(VueQueryPlugin)
+
+Main -> Router : router.isReady()
+Router --> Main : Promise resolve\n（初期ナビゲーション完了）
+
+Main -> MSW : worker.start()\n{ onUnhandledRequest: 'bypass' }
+note over MSW
+  Service Worker を登録・有効化
+  /mockServiceWorker.js
+end note
+MSW --> Main : Promise resolve\n（SW が page を claim 済み）
+
+Main -> Theme : useTheme().initTheme()
+Theme -> LS : getItem('app-theme')
+LS --> Theme : 保存値 or null
+Theme -> Theme : setTheme(saved ?? 'default')
+Theme -> Browser : body.classList 更新\n（テーマクラス付与）
+Theme -> LS : setItem('app-theme', theme)
+
+Main -> App : app.mount('#app')
+App -> App : <IonApp>\n  <IonRouterOutlet>
+
+Router -> Page : / → /items\nItemListPage をレンダリング
+
+Page -> Fetch : useListItems()\n→ GET /api/items
+Fetch -> MSW : fetch('/api/items')
+
+MSW -> Handler : http.get('*/api/items')
+Handler -> Store : store.list()
+Store --> Handler : Item[]
+Handler --> MSW : HttpResponse.json(items)
+MSW --> Fetch : Response 200 JSON
+
+Fetch --> Page : data: Item[]\nisLoading: false
+
+Page -> Browser : <IonList> にアイテム表示
+
+@enduml

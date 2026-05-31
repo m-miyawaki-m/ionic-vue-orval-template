@@ -1,0 +1,67 @@
+@startuml seq-item-detail-operations
+title ItemDetailPage ボタン操作シーケンス
+
+actor "ユーザー" as User
+participant "ItemDetailPage" as Page
+participant "useGetItem\n(Vue Query)" as Query
+participant "useUpdateItem\n(Mutation)" as UpdateM
+participant "useDeleteItem\n(Mutation)" as DeleteM
+participant "customFetch\n(mutator.ts)" as Fetch
+participant "MSW Handler\n(handlers.ts)" as Handler
+participant "store.ts" as Store
+participant "QueryClient\n(Vue Query)" as QC
+participant "Vue Router" as Router
+
+== ページ初期表示（データ取得）==
+
+Router -> Page : /items/:id へナビゲート
+Page -> Query : useGetItem(id)\n→ GET /api/items/:id
+Query -> Fetch : fetch('/api/items/:id')
+Fetch -> Handler : http.get('*/api/items/:id')
+Handler -> Store : store.get(id)
+
+alt アイテムが存在する
+  Store --> Handler : Item
+  Handler --> Fetch : HttpResponse.json(item, 200)
+  Fetch --> Query : data: Item\nisLoading: false
+  Query -> Page : watch(data):\n  form.title = data.title\n  form.description = data.description\n  form.status = data.status
+  Page -> User : フォームにデータを表示
+else アイテムが存在しない（404）
+  Store --> Handler : undefined
+  Handler --> Fetch : HttpResponse(null, 404)
+  Fetch --> Query : isError: true
+  Query -> Page : isError = true
+  Page -> User : 「項目が見つかりません（404）」表示
+end
+
+== 保存ボタン押下 ==
+
+User -> Page : フォーム編集後「保存」をタップ
+Page -> UpdateM : save():\n  updateMutation.mutate(\n    { id, data: form }\n  )
+UpdateM -> Fetch : PUT /api/items/:id\nBody: ItemInput JSON
+Fetch -> Handler : http.put('*/api/items/:id')
+Handler -> Store : store.update(id, body)
+Store --> Handler : 更新後の Item
+Handler --> Fetch : HttpResponse.json(item, 200)
+Fetch --> UpdateM : 更新成功
+
+UpdateM -> QC : onSuccess:\n  invalidateQueries(\n    getListItemsQueryKey()\n  )
+UpdateM -> Router : router.back()
+Router -> User : 前画面（ItemListPage）へ戻る
+
+== 削除ボタン押下 ==
+
+User -> Page : 「削除」をタップ
+Page -> DeleteM : remove():\n  deleteMutation.mutate({ id })
+DeleteM -> Fetch : DELETE /api/items/:id
+Fetch -> Handler : http.delete('*/api/items/:id')
+Handler -> Store : store.remove(id)
+Store --> Handler : void
+Handler --> Fetch : HttpResponse(null, 204)
+Fetch --> DeleteM : 削除成功
+
+DeleteM -> QC : onSuccess:\n  invalidateQueries(\n    getListItemsQueryKey()\n  )
+DeleteM -> Router : router.replace('/items')
+Router -> User : ItemListPage へ遷移\n（ブラウザ履歴から除去）
+
+@enduml

@@ -1,0 +1,43 @@
+@startwbs comp-item-list-page
+title ItemListPage コンポーネントツリー
+
+* ItemListPage\n<src/views/ItemListPage.vue>
+** AppLayout\n<src/layouts/AppLayout.vue>
+*** IonPage
+*** IonHeader
+**** IonToolbar
+***** IonTitle : "Items"
+***** IonButtons [slot=end]
+****** IonButton [テーマ切替]\n@click="showSheet=true"
+******* IonIcon : colorPaletteOutline
+****** slot[actions]\n→ IonButton : "追加"\n@click="openCreate"
+*** IonContent
+**** slot [ページコンテンツ]
+*** IonActionSheet [テーマ選択]\n:is-open="showSheet"\nheader="テーマを選択"
+** [v-if isLoading]
+*** IonSpinner
+** [v-else-if isError]
+*** IonText : "読み込みに失敗しました"
+** [v-else] IonList
+*** IonItem (×n, :router-link="'/items/'+item.id")
+**** IonLabel
+***** h2 : item.title
+***** p : item.status
+*** [v-if items.length===0]
+**** IonText : "項目がありません"
+** IonModal [追加フォーム]\n:is-open="showCreate"
+*** IonHeader
+**** IonToolbar
+***** IonTitle : "追加"
+***** IonButtons [slot=end]
+****** IonButton : "閉じる"\n@click="showCreate=false"
+*** IonContent
+**** IonInput : タイトル\nv-model="form.title"
+**** IonTextarea : 説明\nv-model="form.description"
+**** IonSelect : 状態\nv-model="form.status"
+***** IonSelectOption : todo
+***** IonSelectOption : doing
+***** IonSelectOption : done
+**** IonButton : "保存"\n@click="submitCreate"\n:disabled="!form.title"
+
+@endwbs

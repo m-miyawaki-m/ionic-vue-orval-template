@@ -1,0 +1,33 @@
+@startwbs comp-item-detail-page
+title ItemDetailPage コンポーネントツリー
+
+* ItemDetailPage\n<src/views/ItemDetailPage.vue>
+** AppLayout\n<src/layouts/AppLayout.vue>\ntitle="詳細" back-href="/items"
+*** IonPage
+*** IonHeader
+**** IonToolbar
+***** IonButtons [slot=start]
+****** IonBackButton : default-href="/items"
+***** IonTitle : "詳細"
+***** IonButtons [slot=end]
+****** IonButton [テーマ切替]\n@click="showSheet=true"
+******* IonIcon : colorPaletteOutline
+****** slot[actions] : (なし)
+*** IonContent
+**** slot [ページコンテンツ]
+*** IonActionSheet [テーマ選択]\n:is-open="showSheet"\nheader="テーマを選択"
+** [v-if isLoading]
+*** IonSpinner
+** [v-else-if isError]
+*** IonText : "項目が見つかりません（404）"
+** [v-else-if data]
+*** IonInput : タイトル\nv-model="form.title"
+*** IonTextarea : 説明\nv-model="form.description"
+*** IonSelect : 状態\nv-model="form.status"
+**** IonSelectOption : todo
+**** IonSelectOption : doing
+**** IonSelectOption : done
+*** IonButton : "保存"\n@click="save"\n:disabled="!form.title"
+*** IonButton : "削除"\ncolor="danger"\n@click="remove"
+
+@endwbs
