@@ -14,19 +14,30 @@
       </ion-select>
 
       <ion-button expand="block" class="ion-margin-top" :disabled="!form.title" @click="save">保存</ion-button>
-      <ion-button expand="block" color="danger" @click="remove">削除</ion-button>
+      <ion-button expand="block" color="danger" @click="showConfirm = true">削除</ion-button>
     </template>
   </app-layout>
+
+  <!-- 削除確認シート: props で状態を渡し、emit で結果を受け取る -->
+  <confirm-sheet
+    :is-open="showConfirm"
+    title="このアイテムを削除しますか？"
+    confirm-label="削除"
+    :destructive="true"
+    @confirmed="remove"
+    @cancelled="showConfirm = false"
+  />
 </template>
 
 <script setup lang="ts">
-import { reactive, watch } from 'vue'
+import { reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import {
   IonSpinner, IonText, IonInput, IonTextarea, IonSelect, IonSelectOption, IonButton,
 } from '@ionic/vue'
 import { useQueryClient } from '@tanstack/vue-query'
 import AppLayout from '@/layouts/AppLayout.vue'
+import ConfirmSheet from '@/components/ConfirmSheet.vue'
 import { useGetItem, useUpdateItem, useDeleteItem, getListItemsQueryKey } from '@/api/generated/endpoints'
 import type { ItemInputStatus } from '@/api/generated/model'
 
@@ -37,6 +48,7 @@ const id = String(route.params.id)
 
 const { data, isLoading, isError } = useGetItem(id)
 const form = reactive({ title: '', description: '', status: 'todo' as ItemInputStatus })
+const showConfirm = ref(false)
 
 watch(data, (v) => {
   if (v) {
