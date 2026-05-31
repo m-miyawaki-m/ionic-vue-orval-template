@@ -3,6 +3,7 @@ import { IonicVue } from '@ionic/vue'
 import { VueQueryPlugin } from '@tanstack/vue-query'
 import App from './App.vue'
 import { router } from './router'
+import { useTheme } from '@/composables/useTheme'
 
 /* Ionic core CSS */
 import '@ionic/vue/css/core.css'
@@ -24,5 +25,6 @@ async function enableMocking() {
 
 router.isReady().then(async () => {
   await enableMocking()
+  useTheme().initTheme()
   app.mount('#app')
 })
