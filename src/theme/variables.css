@@ -1,1 +1,34 @@
 /* Ionic theme variables. 既定のままでよい。プロジェクト固有の色はここで上書き。 */
+
+/* === Default（Ionicデフォルト、上書きなし） === */
+/* 必要に応じて :root に追記 */
+
+/* === Dark テーマ === */
+body.theme-dark {
+  /* --ion-color-primary: ; */
+  /* --ion-color-primary-rgb: ; */
+  /* --ion-color-primary-contrast: ; */
+  /* --ion-color-primary-shade: ; */
+  /* --ion-color-primary-tint: ; */
+  /* --ion-background-color: ; */
+  /* --ion-background-color-rgb: ; */
+  /* --ion-text-color: ; */
+  /* --ion-text-color-rgb: ; */
+  /* --ion-toolbar-background: ; */
+  /* --ion-item-background: ; */
+}
+
+/* === Blue テーマ === */
+body.theme-blue {
+  /* --ion-color-primary: ; */
+  /* --ion-color-primary-rgb: ; */
+  /* --ion-color-primary-contrast: ; */
+  /* --ion-color-primary-shade: ; */
+  /* --ion-color-primary-tint: ; */
+  /* --ion-background-color: ; */
+  /* --ion-background-color-rgb: ; */
+  /* --ion-text-color: ; */
+  /* --ion-text-color-rgb: ; */
+  /* --ion-toolbar-background: ; */
+  /* --ion-item-background: ; */
+}
