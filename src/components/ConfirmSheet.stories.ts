@@ -20,7 +20,7 @@
  */
 import type { Meta, StoryObj } from '@storybook/vue3'
 import { ref } from 'vue'
-import { fn } from '@storybook/test'
+import { fn } from 'storybook/test'
 import ConfirmSheet from './ConfirmSheet.vue'
 
 // ----------------------------------------------------------------
