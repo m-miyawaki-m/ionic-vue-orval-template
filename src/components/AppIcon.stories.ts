@@ -33,10 +33,11 @@ export const Filled: Story = {
 }
 
 export const WithColor: Story = {
-  name: '③ カラー指定',
-  args: { name: 'home', color: 'var(--ion-color-primary)' },
+  name: '③ カラー指定（outline）',
+  args: { name: 'home', fill: false, color: 'var(--ion-color-primary)' },
 }
 
+// Controls are intentionally disabled; this is a static comparison grid.
 export const Sizes: Story = {
   name: '④ サイズバリエーション',
   render: () => ({
@@ -52,6 +53,7 @@ export const Sizes: Story = {
   }),
 }
 
+// Controls are intentionally disabled; renders all registered icons as outline/filled pairs.
 export const AllIcons: Story = {
   name: '⑤ 全登録アイコン（outline / filled ペア）',
   render: () => ({
@@ -67,7 +69,7 @@ export const AllIcons: Story = {
             <AppIcon :name="name" :fill="false" :size="28" />
             <AppIcon :name="name" :fill="true"  :size="28" />
           </div>
-          <span style="font-size: 11px; color: gray;">{{ name }}</span>
+          <span style="font-size: 11px; color: var(--ion-color-medium);">{{ name }}</span>
         </div>
       </div>
     `,
