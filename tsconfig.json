@@ -13,7 +13,7 @@
     "skipLibCheck": true,
     "noEmit": true,
     "paths": { "@/*": ["./src/*"] },
-    "types": ["vite/client"]
+    "types": ["vite/client", "unplugin-icons/types/vue"]
   },
   "include": ["src/**/*.ts", "src/**/*.vue", "orval.config.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
