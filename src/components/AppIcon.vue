@@ -6,12 +6,14 @@
 import { computed } from 'vue'
 import { iconRegistry, type AppIconName } from '@/icons/registry'
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   name: AppIconName
   fill?: boolean
   size?: number | string
   color?: string
-}>()
+}>(), {
+  fill: false,
+})
 
 const icon = computed(() =>
   props.fill ? iconRegistry[props.name].filled : iconRegistry[props.name].outline
